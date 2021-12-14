@@ -1,0 +1,6 @@
+int64 speed
+int64 time
+float64 radian
+---
+int64 distance
+float64 radianres
