@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(service_speedTimeRadian)
+project(service_speed_time_radian)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)

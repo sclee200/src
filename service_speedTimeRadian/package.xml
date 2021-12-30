@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>service_speedTimeRadian</name>
+  <name>service_speed_time_radian</name>
   <version>0.0.0</version>
   <description>The service_speedTimeRadian package</description>
 
