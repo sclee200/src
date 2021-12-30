@@ -1,0 +1,4 @@
+float32[] scan_sequence
+---
+bool success
+string message

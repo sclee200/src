@@ -3,5 +3,10 @@
         "/home/lsc/Develops/ros1/test_ws/devel/lib/python3/dist-packages",
         "/home/lsc/Develops/ros1/turtlebot_ws/devel/lib/python3/dist-packages",
         "/opt/ros/noetic/lib/python3/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/lsc/Develops/ros1/test_ws/devel/lib/python3/dist-packages",
+        "/home/lsc/Develops/ros1/turtlebot_ws/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
     ]
 }
