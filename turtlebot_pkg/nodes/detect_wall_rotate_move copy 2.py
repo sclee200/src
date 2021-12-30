@@ -13,7 +13,7 @@ import numpy as np
 from turtlebot_pkg.srv import rotateSomeDegree
 from rotate_some_degree import rotate 
 
-def call_rotate_client():
+def call_rotate_client(laser_arr):
     rospy.wait_for_service('rotate_some_degree')
     sendToServer = rospy.ServiceProxy('rotate_some_degree', rotateSomeDegree)
     res = sendToServer("How much degree I turn?")     
@@ -22,14 +22,10 @@ def call_rotate_client():
 
 standby = False
 STATE = 100
-DEGREE=0.1
-toRAD = 0.0174533
-pub = None
+DEGREE=0
 def callback(data):
     global STATE
     global standby
-    global pub
-    global DEGREE
     # print('standby : ------------------------------------------------', standby)
     # if standby:
     #     print('standby in callback')
@@ -42,7 +38,7 @@ def callback(data):
     nonzero = np.count_nonzero(laser_arr >= 0.35)
     nonInfinity = np.any(np.isnan(laser_arr))
     print('nonzero :', nonzero, 'noninfinity :', nonInfinity)
-    # cmd_vel = Twist()
+    cmd_vel = Twist()
 
     if nonzero > 0 or nonInfinity:
         # cmd_vel.linear.x = 0.2
@@ -53,15 +49,15 @@ def callback(data):
         # pub.publish(cmd_vel)
         STATE=0
         # standby = True
-        # result = call_rotate_client()
-        # print('result.degree : ', result.degree, 'result.success :', result.success)
-        # DEGREE = result.degree
+        result = call_rotate_client(laser_range)
+        print('result.degree : ', result.degree, 'result.success :', result.success)
+        DEGREE = result.degree
 
     # pub.publish(cmd_vel)
     # print("callback return after pub")
 
 def callbackChg(data):
-    
+    toRAD = 0.0174533
     laser_range = data.ranges[0:5]
     laser_arr = np.array(laser_range)
     print(data.ranges[0:5])
@@ -154,9 +150,6 @@ def callbackprint(data):
 
 def main():
     global STATE
-    global DEGREE
-    global standby
-    global pub
     rospy.init_node("detect_wall_move", disable_signals=True)
     # rospy.loginfo("==== parking node Started ====\n")
 
@@ -166,45 +159,18 @@ def main():
     msg = Twist()
     while not rospy.is_shutdown():
         print('STATE : ', STATE)
-        if STATE == 0:            
-            if not standby:
-                standby = True
-                speed = 30
-                result = call_rotate_client()
-                print('result.degree : ', result.degree, 'result.success :', result.success)
-                DEGREE = result.degree
-                angle = DEGREE
-                print('angle : ', angle)
-                clockwise = 0
-                angular_speed  = speed * toRAD
-                # relative_angle = angle * toRAD
-                # angular_speed = 0.195
-                relative_angle = 3.141592/4
-                
-                msg.linear.x  = msg.linear.y  = msg.linear.z  = 0
-                msg.angular.x = msg.angular.y = 0        
-                if clockwise:
-                    msg.angular.z = -abs(angular_speed)
-                else:
-                    msg.angular.z =  abs(angular_speed)
-                    
-                duration = relative_angle / angular_speed
-                time2end = rospy.Time.now() + rospy.Duration(duration)
-
-                pub.publish(msg)
-                # rospy.sleep(duration)
-                while(rospy.Time.now() < time2end):
-                    pass
-
-                msg.linear.x  = msg.linear.y  = msg.linear.z  = 0
-                msg.angular.x = msg.angular.y = msg.angular.z = 0 
-                pub.publish(msg)
-                standby = False
-
-        elif not standby and STATE == 1:
+        if STATE == 0:
+            # msg.linear.x = 0.0
+            # pub.publish(msg)            
+            
+            # standby=True
+            # print('before standby : *****************************************************', standby)
+            rotate(DEGREE, standby)       
+            # print('callback return after rotate---------------------')
+            # standby=False
+            # print('after standby : *****************************************************', standby)
+        elif STATE == 1:
             msg.linear.x = 0.2
-            msg.linear.y  = msg.linear.z  = 0
-            msg.angular.x = msg.angular.y = msg.angular.z = 0 
             pub.publish(msg)
         else:
             rospy.logerr('Unknown state!')

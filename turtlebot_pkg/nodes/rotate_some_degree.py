@@ -38,7 +38,7 @@ def rotate(degree):
     
     pub.publish(msg)
     # rospy.sleep(0.001)
-        
+       
     while(rospy.Time.now() < time2end):
         pass    
         

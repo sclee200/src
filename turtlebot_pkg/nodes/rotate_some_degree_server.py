@@ -2,10 +2,12 @@
 import rospy
 # custom service messsage
 from turtlebot_pkg.srv import rotateSomeDegree, rotateSomeDegreeResponse
-
+count =0
 def fun_callback(req):
+    global count
     # rospy.loginfo('%s ' % req.scan_sequence )
-    print(req.message, ' call receieved' )    
+    count += 1
+    print(req.message, ' call receieved : ', count )    
     degree = 90    
     return rotateSomeDegreeResponse(degree, True)
 
